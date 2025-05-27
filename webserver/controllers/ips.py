@@ -64,11 +64,10 @@ class IpsController:
         return countries
 
     async def get_ips_by_country(
-        self,
-        country: str,
-        start_time: Optional[datetime],
-        end_time: Optional[datetime]
-    ) -> List[str]:
+            self,
+            country: str,
+            start_time: Optional[datetime],
+            end_time: Optional[datetime]) -> List[str]:
         stmt = select(IPAddress.address).where(IPAddress.country == country)
 
         if start_time and end_time:
@@ -81,6 +80,7 @@ class IpsController:
         result = await self.postgres.execute(stmt)
         ips = result.scalars().all()
         return ips
+
 
 def get_ips_controller(postgres=Depends(get_postgresql_db)):
     return IpsController(postgres)
