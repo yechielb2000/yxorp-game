@@ -1,10 +1,9 @@
 from sqlalchemy import Column, Integer, String, text, TIMESTAMP
-from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
+from webserver.adapters.postgresql import PG_Base
 
 
-class IPAddress(Base):
+class IPAddress(PG_Base):
     __tablename__ = "ips"
 
     id = Column(Integer, primary_key=True, index=True)

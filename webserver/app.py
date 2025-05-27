@@ -4,6 +4,7 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
+from webserver.adapters.postgresql import pg_engine, PG_Base
 from webserver.logger_setup import setup_logger
 
 
@@ -11,6 +12,8 @@ from webserver.logger_setup import setup_logger
 async def lifespan(a: FastAPI):
     load_dotenv()
     setup_logger()
+    async with pg_engine.begin() as conn:
+        await conn.run_sync(PG_Base.metadata.create_all)
     yield
 
 
