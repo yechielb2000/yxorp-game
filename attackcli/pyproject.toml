@@ -1,0 +1,10 @@
+[project]
+name = "attackcli"
+version = "0.1.0"
+description = "attack http servers"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "requests>=2.32.3",
+    "typer>=0.16.0",
+]
