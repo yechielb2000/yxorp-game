@@ -27,9 +27,12 @@ def brute_force(
         base_url: str = typer.Option(..., "-u", "--base-url", help="Base URL to target"),
         wordlist_path: str = typer.Option(..., "-w", "--wordlist", help="Path to the wordlist"),
         workers: int = typer.Option(100, "-t", "--workers", help="Number of concurrent workers"),
+        desired_statues: list[int] = typer.Option([200, 403, 422], "-s", "--desired-statues",
+                                                  help="Desired status codes")
+
 ):
     typer.echo(typer.style(f"[+] Starting Brute Force attack on {base_url} with {workers} workers.", fg=colors.MAGENTA))
-    brute_force_attack(base_url, wordlist_path, workers)
+    brute_force_attack(base_url, wordlist_path, workers, desired_statues)
     typer.echo(typer.style("[+] Done", fg=typer.colors.GREEN))
 
 
