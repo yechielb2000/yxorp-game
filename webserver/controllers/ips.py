@@ -45,12 +45,12 @@ class IpsController:
         await self.postgres.execute(stmt)
         await self.postgres.commit()
 
-    def update_ip_info(self, ip_info: IPAddressUpdate) -> None:
+    async def update_ip_info(self, ip_info: IPAddressUpdate) -> None:
         address = ip_info.address
         update_values = ip_info.model_dump(exclude_none=True, exclude={"address"})
         stmt = update(IPAddress).where(IPAddress.address == address).values(**update_values)
-        self.postgres.execute(stmt)
-        self.postgres.commit()
+        await self.postgres.execute(stmt)
+        await self.postgres.commit()
 
     def get_top_queried_countries(self, top: int = 5) -> List[IPAddressRead]:
         stmt = (
