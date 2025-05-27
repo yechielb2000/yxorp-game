@@ -11,7 +11,7 @@ _PORT = os.environ.get("POSTGRESQL_PORT")
 
 _DATABASE_URL = f"postgresql+asyncpg://{_USER}:{_PASSWORD}@{_HOST}:{_PORT}/{_DATABASE}"
 
-pg_base = declarative_base()
+BasePG = declarative_base()
 pg_engine = create_async_engine(_DATABASE_URL, echo=True)
 
 AsyncSessionLocal = async_sessionmaker(bind=pg_engine, expire_on_commit=False, class_=AsyncSession)
