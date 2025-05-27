@@ -40,10 +40,10 @@ class IpsController:
         row = result.first()
         return IPAddressRead(address=row.address, country=row.country, searched_at=row.searched_at)
 
-    def delete_ip_info(self, address: str) -> None:
+    async def delete_ip_info(self, address: str) -> None:
         stmt = delete(IPAddress).where(IPAddress.address == address)
-        self.postgres.execute(stmt)
-        self.postgres.commit()
+        await self.postgres.execute(stmt)
+        await self.postgres.commit()
 
     def update_ip_info(self, ip_info: IPAddressUpdate) -> None:
         address = ip_info.address
