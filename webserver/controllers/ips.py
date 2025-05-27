@@ -23,10 +23,10 @@ class IpsController:
             return IPAddressRead.model_validate(row)
         return None
 
-    def create_ip_info(self, ip_info: IPAddressCreate) -> None:
+    async def create_ip_info(self, ip_info: IPAddressCreate) -> None:
         stmt = insert(IPAddress).values(ip_info.model_dump())
-        self.postgres.execute(stmt)
-        self.postgres.commit()
+        await self.postgres.execute(stmt)
+        await self.postgres.commit()
 
     async def upsert_ip_info(self, ip: str, country: str) -> IPAddressRead:
         stmt = insert(IPAddress).values(address=ip, country=country)
