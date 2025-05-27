@@ -2,12 +2,13 @@ from datetime import datetime
 from typing import Optional, List
 
 from fastapi import Depends
-from sqlalchemy import select, insert, delete, func, and_
+from sqlalchemy import select, delete, func, and_, update
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from webserver.adapters.postgresql import get_postgresql_db
 from webserver.models.ip_address import IPAddress
-from webserver.schemas.ip_address import IPAddressCreate
+from webserver.schemas.ip_address import IPAddressCreate, IPAddressUpdate
 
 
 class IpsController:
@@ -19,13 +20,26 @@ class IpsController:
         address_info = self.postgres.execute(stmt).one_or_none()
         return address_info
 
-    def create_ip_info(self, address_info: IPAddressCreate) -> None:
-        stmt = insert(IPAddress)
-        self.postgres.execute(stmt, address_info.model_dump())
+    def create_ip_info(self, ip_info: IPAddressCreate) -> None:
+        stmt = insert(IPAddress).values(ip_info.model_dump())
+
+        stmt = stmt.on_conflict_do_update(
+            index_elements=[IPAddress.address],
+            set_={"searched_at": func.now()}
+        )
+
+        self.postgres.execute(stmt)
         self.postgres.commit()
 
     def delete_ip_info(self, address: str) -> None:
         stmt = delete(IPAddress).where(IPAddress.address == address)
+        self.postgres.execute(stmt)
+        self.postgres.commit()
+
+    def update_ip_info(self, ip_info: IPAddressUpdate) -> None:
+        address = ip_info.address
+        update_values = ip_info.model_dump(exclude_none=True, exclude={"address"})
+        stmt = update(IPAddress).where(IPAddress.address == address).values(**update_values)
         self.postgres.execute(stmt)
         self.postgres.commit()
 
