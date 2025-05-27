@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/attackcli/.idea/attackcli.iml" filepath="$PROJECT_DIR$/attackcli/.idea/attackcli.iml" />
+      <module fileurl="file://$PROJECT_DIR$/webserver/.idea/webserver.iml" filepath="$PROJECT_DIR$/webserver/.idea/webserver.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/yxorp-game.iml" filepath="$PROJECT_DIR$/.idea/yxorp-game.iml" />
     </modules>
   </component>
