@@ -8,28 +8,34 @@ from sqlalchemy.orm import Session
 
 from webserver.adapters.postgresql import get_postgresql_db
 from webserver.models.ip_address import IPAddress
-from webserver.schemas.ip_address import IPAddressCreate, IPAddressUpdate
+from webserver.schemas.ip_address import IPAddressCreate, IPAddressUpdate, IPAddressRead
 
 
 class IpsController:
     def __init__(self, postgres: Session):
         self.postgres = postgres
 
-    def get_ip_info(self, address: str) -> Optional[IPAddress]:
+    def get_ip_info(self, address: str) -> Optional[IPAddressRead]:
         stmt = select(IPAddress).where(IPAddress.address == address)
         address_info = self.postgres.execute(stmt).one_or_none()
         return address_info
 
     def create_ip_info(self, ip_info: IPAddressCreate) -> None:
         stmt = insert(IPAddress).values(ip_info.model_dump())
-
-        stmt = stmt.on_conflict_do_update(
-            index_elements=[IPAddress.address],
-            set_={"searched_at": func.now()}
-        )
-
         self.postgres.execute(stmt)
         self.postgres.commit()
+
+    def upsert_ip_info(self, ip: str, country: str) -> IPAddressRead:
+        stmt = insert(IPAddress).values(address=ip, country=country)
+        stmt = stmt.on_conflict_do_update(
+            index_elements=[IPAddress.address],
+            set_={"country": country, "searched_at": func.now()}
+        ).returning(IPAddress.address, IPAddress.country, IPAddress.searched_at)
+
+        result = self.postgres.execute(stmt)
+        self.postgres.commit()
+        row = result.first()
+        return IPAddressRead(address=row.address, country=row.country, searched_at=row.searched_at)
 
     def delete_ip_info(self, address: str) -> None:
         stmt = delete(IPAddress).where(IPAddress.address == address)
@@ -43,7 +49,7 @@ class IpsController:
         self.postgres.execute(stmt)
         self.postgres.commit()
 
-    def get_top_queried_countries(self, top: int = 5) -> List[IPAddress]:
+    def get_top_queried_countries(self, top: int = 5) -> List[IPAddressRead]:
         stmt = (
             select(IPAddress.country)
             .group_by(IPAddress.country)
@@ -57,7 +63,7 @@ class IpsController:
             self,
             country: str,
             start_time: Optional[datetime],
-            end_time: Optional[datetime]) -> List[IPAddress]:
+            end_time: Optional[datetime]) -> List[IPAddressRead]:
         stmt = select(IPAddress.address).where(IPAddress.country == country)
 
         if start_time and end_time:

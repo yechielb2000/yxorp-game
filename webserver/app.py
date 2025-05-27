@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from http import HTTPStatus
 
 import ipwhois
 import uvicorn
@@ -7,10 +8,12 @@ from fastapi import FastAPI
 from fastapi.params import Depends
 from loguru import logger
 from pydantic import IPvAnyAddress
+from starlette.responses import JSONResponse
 
 from webserver.adapters.postgresql import pg_engine, BasePG
 from webserver.controllers.ips import get_ips_controller, IpsController
 from webserver.logger_setup import setup_logger
+from webserver.schemas.ip_address import IPAddressRead
 
 
 @asynccontextmanager
@@ -32,11 +35,10 @@ async def get_ip_info(ip_address: IPvAnyAddress, ips_controller: IpsController =
     results = whois.lookup_rdap()
     country = results.get('network', {}).get('country')
     if country:
-        ips_controller.create_ip_info(country)
-    else:
-        logger.debug("ip info not found", extra={'ip_address': ip_address})
-    return
+        return ips_controller.upsert_ip_info(str(ip_address), country)
+    logger.debug("IP info not found", extra={'ip_address': ip_address})
+    return JSONResponse(status_code=HTTPStatus.NO_CONTENT, content={"error": "IP info not found"})
 
 
 if __name__ == '__main__':
-    uvicorn.run("cnc:app", host="0.0.0.0", port=8000)
+    uvicorn.run("app:app", host="0.0.0.0", port=8000)

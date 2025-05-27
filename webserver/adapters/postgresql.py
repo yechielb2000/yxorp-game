@@ -3,16 +3,16 @@ import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import declarative_base
 
-_USER = os.environ.get("POSTGRESQL_USER")
-_PASSWORD = os.environ.get("POSTGRESQL_PASSWORD")
-_DATABASE = os.environ.get("POSTGRESQL_DATABASE")
-_HOST = os.environ.get("POSTGRESQL_HOST")
-_PORT = os.environ.get("POSTGRESQL_PORT")
+USER = os.environ.get("POSTGRESQL_USER")
+PASSWORD = os.environ.get("POSTGRESQL_PASSWORD")
+DATABASE = os.environ.get("POSTGRESQL_DB")
+HOST = os.environ.get("POSTGRESQL_HOST")
+PORT = os.environ.get("POSTGRESQL_PORT")
 
-_DATABASE_URL = f"postgresql+asyncpg://{_USER}:{_PASSWORD}@{_HOST}:{_PORT}/{_DATABASE}"
+DATABASE_URL = f"postgresql+asyncpg://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
 
 BasePG = declarative_base()
-pg_engine = create_async_engine(_DATABASE_URL, echo=True)
+pg_engine = create_async_engine(DATABASE_URL, echo=True)
 
 AsyncSessionLocal = async_sessionmaker(bind=pg_engine, expire_on_commit=False, class_=AsyncSession)
 

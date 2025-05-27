@@ -22,4 +22,4 @@ class IPAddressUpdate(BaseModel):
 
 class IPAddressRead(IPAddressBase):
     class Config:
-        orm_mode = True
+        from_attributes = True
