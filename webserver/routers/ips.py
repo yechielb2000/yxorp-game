@@ -21,6 +21,6 @@ async def get_ip_info(ip: IPvAnyAddress, ips_controller: IpsController = Depends
     results = whois.lookup_rdap()
     country = results.get('network', {}).get('country')
     if country:
-        return ips_controller.upsert_ip_info(str(ip), country)
+        return await ips_controller.upsert_ip_info(str(ip), country)
     logger.debug("IP info not found", extra={'ip_address': ip})
     return JSONResponse(status_code=HTTPStatus.NO_CONTENT, content={"error": "IP info not found"})
