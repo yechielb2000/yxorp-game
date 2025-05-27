@@ -71,14 +71,13 @@ services:
 
   webserver:
     build:
-      context: .
-      dockerfile: webserver/Dockerfile
+      context: ./webserver
     container_name: webserver
     restart: always
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - ./webserver:/webserver
     env_file:
       - .env
     environment:
@@ -95,10 +94,20 @@ services:
       - redis_net
       - es_net
 
+  attacker-cli:
+    build:
+      context: ./attackcli
+    container_name: attack-cli
+    restart: always
+    stdin_open: true
+    tty: true
+
+
 volumes:
   pg_data:
   redis_data:
   es_data:
+  attacker_wordlists:
 
 networks:
   postgres_net:

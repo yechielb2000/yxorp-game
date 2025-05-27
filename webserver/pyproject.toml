@@ -1,5 +1,5 @@
 [project]
-name = "yxorp-game"
+name = "webserver"
 version = "0.1.0"
 description = "reverse proxy games"
 readme = "README.md"
@@ -16,5 +16,3 @@ dependencies = [
     "uvicorn>=0.34.2",
 ]
 
-[tool.uv.workspace]
-members = ["http_strike_kit"]
