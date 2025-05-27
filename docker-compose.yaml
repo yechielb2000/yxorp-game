@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres
+    image: postgres:latest
     container_name: webserver-postgres
     restart: always
     shm_size: 128mb
@@ -9,17 +9,18 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - ./.vol/pg-data:/var/lib/postgresql/data
 
   adminer:
-    image: adminer
+    image: adminer:latest
     container_name: adminer
     restart: always
     ports:
       - "8080:8080"
 
-  cnc-cache:
+  redis:
     image: redis:6.2-alpine
     restart: always
     ports:
@@ -29,14 +30,14 @@ services:
       - ./.vol:/redis_data
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:latest
     container_name: es
     environment:
       - node.name=es
       - discovery.type=single-node
-#      - xpack.security.enabled=false
-#      - xpack.security.http.ssl.enabled=false
-#      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    #      - xpack.security.enabled=false
+    #      - xpack.security.http.ssl.enabled=false
+    #      - ES_JAVA_OPTS=-Xms1g -Xmx1g
     ports:
       - "9200:9200"
     volumes:
@@ -51,3 +52,18 @@ services:
       - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_URL}
     depends_on:
       - elasticsearch
+
+  webserver:
+    build:
+      context: .
+      dockerfile: webserver/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - elasticsearch
+      - redis
