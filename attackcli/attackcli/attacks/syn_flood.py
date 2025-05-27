@@ -1,10 +1,10 @@
 import socket
 
 import typer
+from rich.progress import Progress, SpinnerColumn
 
 from attackcli.utils.thread_exec import ThreadedExecutor
 
-from rich.progress import Progress, SpinnerColumn, TextColumn
 
 def _syn_once(target: str, port: int):
     try:
@@ -21,10 +21,7 @@ def syn_flood_attack(target: str, port: int, workers: int) -> None:
     executor = ThreadedExecutor(max_workers=workers)
     executor.start()
     try:
-        with Progress(
-                SpinnerColumn(),
-                transient=True,
-        ) as progress:
+        with Progress(SpinnerColumn(), transient=True) as progress:
             task = progress.add_task("[cyan]Sending packets...", start=False)
             progress.start_task(task)
             while True:
