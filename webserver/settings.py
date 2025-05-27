@@ -23,7 +23,7 @@ class Settings(BaseSettings):
 
     @property
     def elasticsearch_url(self) -> str:
-        return f"https://{self.elasticsearch_host}:{self.elasticsearch_port}"
+        return f"http://{self.elasticsearch_host}:{self.elasticsearch_port}"
 
     @property
     def postgresql_url(self) -> str:

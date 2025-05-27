@@ -1,7 +1,7 @@
 from elasticsearch import Elasticsearch
 
-from webserver.settings import Settings
+from webserver.settings import settings
 
 
 def get_elasticsearch_client():
-    return Elasticsearch(Settings.elasticsearch_url)
+    return Elasticsearch(settings.elasticsearch_url)

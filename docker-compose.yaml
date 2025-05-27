@@ -11,9 +11,11 @@ services:
       POSTGRES_USER: ${POSTGRESQL_USER}
       POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
     volumes:
-      - ./.vol/pg_data:/var/lib/postgresql/data
-      - ./config/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
-    command: ["postgres", "-c", "hba_file=/var/lib/postgresql/data/pg_hba.conf"]
+      - pg_data:/var/lib/postgresql/data
+      - ./config/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+    command: ["postgres", "-c", "hba_file=/etc/postgresql/pg_hba.conf"]
+    networks:
+      - postgres_net
 
   adminer:
     image: adminer:latest
@@ -21,29 +23,36 @@ services:
     restart: always
     ports:
       - "8080:8080"
+    networks:
+      - postgres_net
 
   redis:
     image: redis:6.2-alpine
     restart: always
     ports:
-      - '6379:6379'
+      - "6379:6379"
     command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
     volumes:
-      - ./.vol:/redis_data
+      - redis_data:/data
+    networks:
+      - redis_net
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
     container_name: es
+    restart: always
     environment:
       - node.name=es
       - discovery.type=single-node
-    #      - xpack.security.enabled=false
-    #      - xpack.security.http.ssl.enabled=false
-    #      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
     ports:
       - "9200:9200"
     volumes:
-      - ./.vol/es_data:/usr/share/elasticsearch/data
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - es_net
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.12.0
@@ -51,21 +60,41 @@ services:
     ports:
       - "5601:5601"
     environment:
-      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_URL}
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     depends_on:
       - elasticsearch
+    networks:
+      - es_net
 
   webserver:
     build:
       context: .
       dockerfile: webserver/Dockerfile
+    container_name: webserver
+    restart: always
     ports:
       - "8000:8000"
     volumes:
       - .:/app
     env_file:
       - .env
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
     depends_on:
       - postgres
       - elasticsearch
       - redis
+    networks:
+      - postgres_net
+      - redis_net
+      - es_net
+
+volumes:
+  pg_data:
+  redis_data:
+  es_data:
+
+networks:
+  postgres_net:
+  redis_net:
+  es_net:
