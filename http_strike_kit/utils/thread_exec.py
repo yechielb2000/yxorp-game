@@ -37,6 +37,9 @@ class ThreadedExecutor:
                 self.threads.append(t)
 
     def wait(self):
+        typer.echo(typer.style("[+] Stopping...", fg=typer.colors.MAGENTA))
+        typer.echo(typer.style("[+] Waiting for tasks to complete...", fg=typer.colors.MAGENTA))
+        typer.echo(typer.style("[+] To stop immediately Ctrl + C again", fg=typer.colors.MAGENTA))
         self.tasks.join()
         self._stop_event.set()
         for t in self.threads:

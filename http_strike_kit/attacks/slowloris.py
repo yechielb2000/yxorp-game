@@ -28,7 +28,7 @@ def _send_slowloris_request(target: str, port: int, timeout: float):
 
 
 def slowloris_attack(target: str, port: int, timeout: float, workers: int):
-    typer.echo(typer.style("to stop Press CTRL+C to stop it.", fg=typer.colors.WHITE, bold=True))
+    typer.echo(typer.style("[!] To stop Press CTRL+C to stop it.", fg=typer.colors.WHITE, bold=True))
     executor = ThreadedExecutor(max_workers=workers)
     executor.start()
 
