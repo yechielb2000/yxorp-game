@@ -4,7 +4,7 @@ from typing import Optional, List
 from fastapi import Depends
 from sqlalchemy import select, delete, func, and_, update
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from webserver.adapters.postgresql import get_postgresql_db
 from webserver.models.ip_address import IPAddress
@@ -12,28 +12,31 @@ from webserver.schemas.ip_address import IPAddressCreate, IPAddressUpdate, IPAdd
 
 
 class IpsController:
-    def __init__(self, postgres: Session):
+    def __init__(self, postgres: AsyncSession):
         self.postgres = postgres
 
-    def get_ip_info(self, address: str) -> Optional[IPAddressRead]:
+    async def get_ip_info(self, address: str) -> Optional[IPAddressRead]:
         stmt = select(IPAddress).where(IPAddress.address == address)
-        address_info = self.postgres.execute(stmt).one_or_none()
-        return address_info
+        result = await self.postgres.execute(stmt)
+        row = result.scalar_one_or_none()
+        if row:
+            return IPAddressRead.model_validate(row)
+        return None
 
     def create_ip_info(self, ip_info: IPAddressCreate) -> None:
         stmt = insert(IPAddress).values(ip_info.model_dump())
         self.postgres.execute(stmt)
         self.postgres.commit()
 
-    def upsert_ip_info(self, ip: str, country: str) -> IPAddressRead:
+    async def upsert_ip_info(self, ip: str, country: str) -> IPAddressRead:
         stmt = insert(IPAddress).values(address=ip, country=country)
         stmt = stmt.on_conflict_do_update(
             index_elements=[IPAddress.address],
             set_={"country": country, "searched_at": func.now()}
         ).returning(IPAddress.address, IPAddress.country, IPAddress.searched_at)
 
-        result = self.postgres.execute(stmt)
-        self.postgres.commit()
+        result = await  self.postgres.execute(stmt)
+        await  self.postgres.commit()
         row = result.first()
         return IPAddressRead(address=row.address, country=row.country, searched_at=row.searched_at)
 

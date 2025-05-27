@@ -5,15 +5,20 @@ services:
     restart: always
     shm_size: 128mb
     ports:
-      - "5432:5432"
+      - "${POSTGRESQL_PORT}:${POSTGRESQL_PORT}"
     environment:
-      POSTGRES_DB: db
+      POSTGRES_DB: ${POSTGRESQL_DB}
       POSTGRES_USER: ${POSTGRESQL_USER}
       POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
     volumes:
       - pg_data:/var/lib/postgresql/data
-      - ./config/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
-    command: ["postgres", "-c", "hba_file=/etc/postgresql/pg_hba.conf"]
+#      - ./config/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+#    command: [ "postgres", "-c", "hba_file=/etc/postgresql/pg_hba.conf" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRESQL_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - postgres_net
 
@@ -81,9 +86,12 @@ services:
     environment:
       - WATCHFILES_FORCE_POLLING=true
     depends_on:
-      - postgres
-      - elasticsearch
-      - redis
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_started
+      redis:
+        condition: service_started
     networks:
       - postgres_net
       - redis_net
