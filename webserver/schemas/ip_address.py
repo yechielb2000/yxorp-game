@@ -1,0 +1,25 @@
+from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel, IPvAnyAddress
+
+
+class IPAddressBase(BaseModel):
+    address: IPvAnyAddress
+    searched_at: datetime
+    country: str
+
+
+class IPAddressCreate(IPAddressBase):
+    pass
+
+
+class IPAddressUpdate(BaseModel):
+    address: IPvAnyAddress | str
+    searched_at: Optional[datetime] = None
+    country: Optional[str] = None
+
+
+class IPAddressRead(IPAddressBase):
+    class Config:
+        orm_mode = True
