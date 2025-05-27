@@ -12,7 +12,7 @@ COPY . .
 
 #RUN uv sync --frozen --no-cache
 
-RUN uv pip install --system elasticsearch fastapi loguru python-dotenv sqlalchemy uvicorn asyncpg ipwhois
+RUN uv pip install --system elasticsearch fastapi loguru python-dotenv sqlalchemy uvicorn asyncpg ipwhois pydantic_settings
 
 #ENV PATH="/app/.venv/bin:$PATH"
 

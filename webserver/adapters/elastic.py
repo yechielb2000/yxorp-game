@@ -1,9 +1,7 @@
-import os
-
 from elasticsearch import Elasticsearch
 
-ELASTICSEARCH_URL = os.getenv("ELASTICSEARCH_URL")
+from webserver.settings import Settings
 
 
 def get_elasticsearch_client():
-    return Elasticsearch(ELASTICSEARCH_URL)
+    return Elasticsearch(Settings.elasticsearch_url)
