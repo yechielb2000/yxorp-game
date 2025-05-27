@@ -52,15 +52,16 @@ class IpsController:
         await self.postgres.execute(stmt)
         await self.postgres.commit()
 
-    def get_top_queried_countries(self, top: int = 5) -> List[IPAddressRead]:
+    async def get_top_queried_countries(self, top: int = 5) -> List[str]:
         stmt = (
             select(IPAddress.country)
             .group_by(IPAddress.country)
             .order_by(func.count(IPAddress.address).desc())
             .limit(top)
         )
-        top_x_countries = self.postgres.execute(stmt).scalars().all()
-        return top_x_countries
+        result = await self.postgres.execute(stmt)
+        countries = result.scalars().all()
+        return countries
 
     def get_ips_by_country(
             self,
