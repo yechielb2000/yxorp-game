@@ -35,8 +35,8 @@ class IpsController:
             set_={"country": country, "searched_at": func.now()}
         ).returning(IPAddress.address, IPAddress.country, IPAddress.searched_at)
 
-        result = await  self.postgres.execute(stmt)
-        await  self.postgres.commit()
+        result = await self.postgres.execute(stmt)
+        await self.postgres.commit()
         row = result.first()
         return IPAddressRead(address=row.address, country=row.country, searched_at=row.searched_at)
 
