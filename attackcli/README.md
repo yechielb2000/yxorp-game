@@ -6,6 +6,10 @@ A command-line toolkit for simulating common web-layer and network-layer attacks
 
 ## 🚀 Getting Started
 
+You can run this in the terminal or in a container.  
+Note that for using in a container you need to uncomment it in
+`docker-compose.yam`.  
+
 To explore available commands:
 
 ```shell

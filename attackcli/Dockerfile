@@ -4,9 +4,10 @@ WORKDIR /attackcli
 
 ENV UV_COMPILE_BYTECODE=1
 
-ENV UV_PROJECT_ENVIRONMENT="/usr/local"
+COPY pyproject.toml .
+COPY uv.lock .
 
-COPY requirements.txt .
+ENV UV_PROJECT_ENVIRONMENT="/usr/local"
 
 RUN uv venv && uv pip install -r requirements.txt
 

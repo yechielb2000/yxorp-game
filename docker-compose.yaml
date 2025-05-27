@@ -94,13 +94,14 @@ services:
       - redis_net
       - es_net
 
-  attacker-cli:
-    build:
-      context: ./attackcli
-    container_name: attack-cli
-    restart: always
-    stdin_open: true
-    tty: true
+# !note -> You can use it to run the attack cli from a container.
+#  attacker-cli:
+#    build:
+#      context: ./attackcli
+#    container_name: attack-cli
+#    restart: always
+#    stdin_open: true
+#    tty: true
 
 
 volumes:
