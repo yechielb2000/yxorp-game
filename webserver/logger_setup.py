@@ -15,24 +15,32 @@ class ElasticSearchLogSink:
         """
         In extra, you can pass index value to control what index this log should write to.
         """
+        log_doc = {}
         log_record = message.record
 
         index = message.record["extra"].get("index", self.default_index)
 
-        log_doc = {
-            "timestamp": log_record["time"].isoformat(),
-            "level": log_record["level"].name,
-            "message": log_record["message"],
-            "module": log_record["module"],
-            "function": log_record["function"],
-            "line": log_record["line"],
-        }
-
+        if index == "infra-logs":
+            log_doc = {
+                "timestamp": log_record["time"].isoformat(),
+                "level": log_record["level"].name,
+                "message": log_record["message"],
+                "module": log_record["module"],
+                "function": log_record["function"],
+                "line": log_record["line"],
+                "extra": log_record["extra"]
+            }
+        elif index == "user-actions":
+            log_doc = {
+                "timestamp": log_record["time"].isoformat(),
+                "message": log_record["message"],
+                "extra": log_record["extra"]
+            }
         self.elastic.index(index=index, document=log_doc)
 
 
 def setup_logger():
     elastic_client = get_elasticsearch_client()
     es_sink = ElasticSearchLogSink(elastic_client)
-    # logger.remove()
+    logger.remove()
     logger.add(es_sink, level=logging.INFO)
