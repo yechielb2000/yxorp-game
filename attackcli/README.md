@@ -15,7 +15,7 @@ cli.py attack --help      # View available attack types and options
 
 ---
 
-## 💣 Available Attack Methods
+## Available Attack Methods
 
 ### 🔐 Brute Force Attack
 
