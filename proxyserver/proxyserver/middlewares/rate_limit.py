@@ -12,7 +12,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     For each ip update the redis counter.
     If in exceed the request limit of `MAX_REQUESTS_PER_SECOND`, return 429.
     """
-    MAX_REQUESTS_PER_SECOND = 20
+    MAX_REQUESTS_PER_SECOND: int = 20
+    RATE_LIMIT_DURATION: int = 1
+    REDIS_KEY_PREFIX: str = "ratelimit:"
 
     def __init__(self, app, redis_client: Redis):
         super().__init__(app)
@@ -21,11 +23,11 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         try:
             ip = request.client.host
-            key = f"ratelimit:{ip}"
+            key = f"{self.REDIS_KEY_PREFIX}{ip}"
 
             count = await self.redis.incr(key)
             if count == 1:
-                await self.redis.expire(key, 1)
+                await self.redis.expire(key, self.RATE_LIMIT_DURATION)
 
             if count > self.MAX_REQUESTS_PER_SECOND:
                 return self._create_rate_limit_response()
