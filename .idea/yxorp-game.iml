@@ -12,7 +12,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="attackcli" />
     <orderEntry type="module" module-name="webserver" />
-    <orderEntry type="module" module-name="proxy" />
     <orderEntry type="module" module-name="proxyserver" />
   </component>
 </module>
