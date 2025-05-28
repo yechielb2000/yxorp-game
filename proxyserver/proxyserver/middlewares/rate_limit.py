@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from fastapi import Request
 from fastapi.responses import JSONResponse
+from loguru import logger
 from redis.asyncio import Redis
 from redis.exceptions import RedisError
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -21,21 +22,38 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.redis = redis_client
 
     async def dispatch(self, request: Request, call_next):
+        client_ip = request.client.host
         try:
-            ip = request.client.host
-            key = f"{self.REDIS_KEY_PREFIX}{ip}"
+            is_rate_limited, request_count = await self._check_rate_limit(client_ip)
 
-            count = await self.redis.incr(key)
-            if count == 1:
-                await self.redis.expire(key, self.RATE_LIMIT_DURATION)
-
-            if count > self.MAX_REQUESTS_PER_SECOND:
+            if is_rate_limited:
+                logger.info(f"Rate limit exceeded", extra=dict(client_ip=client_ip, request_count=request_count))
                 return self._create_rate_limit_response()
+
             return await call_next(request)
-        except RedisError:
+
+        except RedisError as e:
             pass
-            # TODO: log this out!
+            logger.exception("Redis error", exc_info=e, extra=dict(client_ip=client_ip))
             return await call_next(request)
+
+    async def _check_rate_limit(self, ip_address: str) -> tuple[bool, int]:
+        """
+        Checks if the rate limit for a specific IP address has been exceeded.
+
+        :param ip_address: The IP address of the client making the request.
+        :type ip_address: str
+        :return: A tuple containing a boolean indicating whether the rate limit has
+            been exceeded and the current request count for the IP address.
+        :rtype: Tuple[bool, int]
+        """
+        redis_key = f"{self.REDIS_KEY_PREFIX}{ip_address}"
+        request_count = await self.redis.incr(redis_key)
+
+        if request_count == 1:
+            await self.redis.expire(redis_key, self.RATE_LIMIT_DURATION)
+
+        return request_count > self.MAX_REQUESTS_PER_SECOND, request_count
 
     def _create_rate_limit_response(self) -> JSONResponse:
         return JSONResponse(
