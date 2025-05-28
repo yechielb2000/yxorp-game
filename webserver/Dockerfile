@@ -14,7 +14,7 @@ RUN uv sync --frozen --no-cache
 
 COPY . .
 
-CMD ["uv", "run", "uvicorn", "src.app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uv", "run", "uvicorn", "webserver.app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
 
 
