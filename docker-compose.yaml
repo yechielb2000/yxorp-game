@@ -29,17 +29,6 @@ services:
     networks:
       - postgres_net
 
-  redis:
-    image: redis:6.2-alpine
-    restart: always
-    ports:
-      - "${REDIS_PORT}:${REDIS_PORT}"
-    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
-    volumes:
-      - redis_data:/data
-    networks:
-      - redis_net
-
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
     container_name: es
@@ -87,11 +76,8 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_started
-      redis:
-        condition: service_started
     networks:
       - postgres_net
-      - redis_net
       - es_net
       - web_net
 
@@ -119,12 +105,9 @@ services:
 
 volumes:
   pg_data:
-  redis_data:
   es_data:
-  attacker_wordlists:
 
 networks:
   postgres_net:
-  redis_net:
   es_net:
   web_net:
