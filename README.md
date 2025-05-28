@@ -9,7 +9,7 @@ Your goal is to put him down! 😈
 
 ### 🔵 Blue Team
 
-Develop a `proxy server` to defend the `webserver`.  
+Configure nginx to defend the `webserver`.  
 Your mission is to protect it at all costs! 💂
 
 There are already usable components, but they don't do much since the attacks are useless against the proxy
@@ -32,7 +32,29 @@ Webserver for geolocation queries.
 CLI to attach http servers.  
 [README.md](attackcli/README.md)
 
-### Proxy Server
+### Nginx
 
-A proxy server to stop the attackers.  
+You can edit the configuration here: [nginx.conf](nginx/nginx.conf)
 All requests to the web server go through this proxy first.
+
+### Tools to play around
+
+#### Adminer
+
+Connect to adminer to see data from the webserver db.  
+Connection details:
+
+```dotenv
+System: PostgreSQL
+Server: webserver-postgres
+Username: admin
+Password: admin
+Database: db
+```
+
+#### Kibana
+
+Connect to kibana to see webserver logs 
+```dotenv
+...
+```
