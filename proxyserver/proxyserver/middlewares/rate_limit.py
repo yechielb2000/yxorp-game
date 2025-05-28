@@ -3,6 +3,7 @@ from http import HTTPStatus
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from redis.asyncio import Redis
+from redis.exceptions import RedisError
 from starlette.middleware.base import BaseHTTPMiddleware
 
 
@@ -18,14 +19,24 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.redis = redis_client
 
     async def dispatch(self, request: Request, call_next):
-        ip = request.client.host
-        key = f"ratelimit:{ip}"
+        try:
+            ip = request.client.host
+            key = f"ratelimit:{ip}"
 
-        count = await self.redis.incr(key)
-        if count == 1:
-            await self.redis.expire(key, 1)
+            count = await self.redis.incr(key)
+            if count == 1:
+                await self.redis.expire(key, 1)
 
-        if count > self.MAX_REQUESTS_PER_SECOND:
-            return JSONResponse(status_code=HTTPStatus.TOO_MANY_REQUESTS, content={"error": "Too many requests"})
+            if count > self.MAX_REQUESTS_PER_SECOND:
+                return self._create_rate_limit_response()
+            return await call_next(request)
+        except RedisError:
+            pass
+            # TODO: log this out!
+            return await call_next(request)
 
-        return await call_next(request)
+    def _create_rate_limit_response(self) -> JSONResponse:
+        return JSONResponse(
+            status_code=HTTPStatus.TOO_MANY_REQUESTS,
+            content={"error": "Too many requests"}
+        )
