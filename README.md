@@ -54,7 +54,19 @@ Database: db
 
 #### Kibana
 
-Connect to kibana to see webserver logs 
-```dotenv
-...
+Connect to kibana to see webserver logs.
+
+First, we need to import our data views, so let's do this.
+
+###### Make sure the path to `kibana-data-views.ndjson` is correct.
+
+```shell
+curl -X POST http://localhost:5601/api/saved_objects/_import -H "kbn-xsrf: true" --form file=@./kibana/kibana-data-views.ndjson
 ```
+
+Now go to [kibana](http://localhost:5601/app/discover).  
+There are three indexes:
+
+- `infra-logs` - for webserver infra structure logs
+- `user-actions` - for user action in the webserver
+- `nginx-logs` - for all nginx logs
