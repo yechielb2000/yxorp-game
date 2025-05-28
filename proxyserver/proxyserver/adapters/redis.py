@@ -3,7 +3,7 @@ from redis.asyncio import Redis
 from settings import settings
 
 
-def get_redis():
+def get_redis() -> Redis:
     return Redis(
         host=settings.redis_host,
         port=settings.redis_port,
