@@ -9,7 +9,7 @@ COPY uv.lock .
 
 ENV UV_PROJECT_ENVIRONMENT="/usr/local"
 
-RUN uv venv && uv pip install -r requirements.txt
+RUN uv sync --frozen --no-cache
 
 COPY . .
 

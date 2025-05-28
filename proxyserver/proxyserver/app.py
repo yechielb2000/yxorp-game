@@ -4,6 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from middlewares.rate_limit import RateLimitMiddleware
+from middlewares.reverse_proxy import ProxyMiddleware
 from proxyserver.adapters.redis import redis_instance
 from settings import settings
 
@@ -16,7 +17,9 @@ async def lifespan(application: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+app.add_middleware(ProxyMiddleware)
 app.add_middleware(RateLimitMiddleware, redis_client=redis_instance)
 
 if __name__ == '__main__':
-    uvicorn.run("app:app", host="0.0.0.0", port=settings.webserver_port)  # TODO: should be as webserver port.
+    port = settings.webserver_port + 1
+    uvicorn.run("app:app", host="0.0.0.0", port=port)

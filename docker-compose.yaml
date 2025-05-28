@@ -75,7 +75,7 @@ services:
     container_name: webserver
     restart: always
     ports:
-      - "8000:8000"
+      - "8000"
     volumes:
       - ./webserver:/webserver
     env_file:
