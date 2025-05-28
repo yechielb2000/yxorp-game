@@ -13,6 +13,9 @@ RUN uv sync --frozen --no-cache
 
 COPY . .
 
+COPY attack /usr/local/bin/attack
+RUN chmod +x /usr/local/bin/attack
+
 ENTRYPOINT ["sh"]
 
 
