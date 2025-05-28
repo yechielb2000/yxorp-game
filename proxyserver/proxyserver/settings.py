@@ -6,7 +6,8 @@ class Settings(BaseSettings):
     redis_user: str = Field(..., alias="REDIS_USER")
     redis_host: str = Field(..., alias="REDIS_HOST")
     redis_port: str = Field(..., alias="REDIS_PORT")
-    redis_url: str = Field(..., alias="WEBSERVER_URL")
+    webserver_url: str = Field(..., alias="WEBSERVER_URL")
+    webserver_port: int = Field(..., alias="WEBSERVER_PORT")
 
     class Config:
         env_file = ".env"
