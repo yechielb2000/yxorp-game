@@ -94,6 +94,14 @@ services:
       - redis_net
       - es_net
 
+  attack-cli:
+    build:
+      context: ./attackcli
+    container_name: attack-cli
+    restart: always
+    stdin_open: true
+    tty: true
+
 
 volumes:
   pg_data:

@@ -6,6 +6,10 @@ A command-line toolkit for simulating common web-layer and network-layer attacks
 
 ## 🚀 Getting Started
 
+You can run this in the terminal or in a container.  
+Note that for using in a container you need to uncomment it in
+`docker-compose.yaml`.  
+(I don't really see a reason to put this in container, but you asked for it xd)
 To explore available commands:
 
 ```shell
@@ -15,7 +19,7 @@ cli.py attack --help      # View available attack types and options
 
 ---
 
-## Available Attack Methods
+## 💣 Available Attack Methods
 
 ### 🔐 Brute Force Attack
 
