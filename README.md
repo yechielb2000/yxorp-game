@@ -15,7 +15,7 @@ Your mission is to protect it at all costs! 💂
 There are already usable components, but they don't do much since the attacks are useless against the proxy
 defense!
 
-### Get to know your components
+## Get to know your components
 
 The components were developed in the same repo.  
 I attached them to one repo but in different environments. This is why you see the directories twice.
