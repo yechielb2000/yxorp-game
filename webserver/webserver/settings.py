@@ -3,10 +3,6 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-
-    postgres_user: str = Field(..., alias="POSTGRES_USER")
-    postgres_password: str = Field(..., alias="POSTGRES_PASSWORD")
-
     postgresql_db: str = Field(..., alias="POSTGRESQL_DB")
     postgresql_user: str = Field(..., alias="POSTGRESQL_USER")
     postgresql_password: str = Field(..., alias="POSTGRESQL_PASSWORD")
@@ -17,7 +13,7 @@ class Settings(BaseSettings):
     elasticsearch_port: int = Field(..., alias="ELASTICSEARCH_PORT")
 
     class Config:
-        env_file = ".env"
+        env_file = "../../.env"
         extra = "ignore"
 
     @property

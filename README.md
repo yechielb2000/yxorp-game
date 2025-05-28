@@ -34,8 +34,9 @@ CLI to attach http servers.
 
 ### Nginx
 
-You can edit the configuration here: [nginx.conf](nginx/nginx.conf)
-All requests to the web server go through this proxy first.
+You can edit the configuration here: [nginx.conf](nginx/nginx.conf).  
+
+###### All requests to the web server go through this proxy first.
 
 ### Tools to play around
 
