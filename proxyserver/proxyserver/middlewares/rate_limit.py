@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 
-class RedisMiddleware(BaseHTTPMiddleware):
+class RateLimitMiddleware(BaseHTTPMiddleware):
     """
     For each ip update the redis counter.
     If in exceed the request limit of `MAX_REQUESTS_PER_SECOND`, return 429.
