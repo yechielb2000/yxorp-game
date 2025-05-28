@@ -1,9 +1,17 @@
 # yxorp-game
 
-## How to
+I tried to make it as simple as possible.
 
-#### Run webserver
+### Components.
 
-```shell
-docker compose up --build -d     
-```
+### Web Server
+
+Webserver for geolocation queries.  
+[README.md](webserver/README.md)
+
+### Attack CLI
+
+CLI to attach http servers.  
+[README.md](attackcli/README.md)
+
+### Proxy Server
