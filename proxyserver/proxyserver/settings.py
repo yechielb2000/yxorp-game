@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     webserver_port: int = Field(..., alias="WEBSERVER_PORT")
 
     class Config:
-        env_file = ".env"
+        env_file = "../../.env"
         extra = "ignore"
 
 

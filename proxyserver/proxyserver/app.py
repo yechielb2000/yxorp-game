@@ -2,20 +2,22 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
-from redis.asyncio import Redis
 
+from middlewares.rate_limit import RateLimitMiddleware
 from proxyserver.adapters.redis import get_redis
 from settings import settings
 
-app = FastAPI()
-app.state.redis.redis_client: Redis
-
 
 @asynccontextmanager
-async def lifespan(a: FastAPI):
-    a.state.redis_client = get_redis()
+async def lifespan(application: FastAPI):
+    redis_client = get_redis()
+
+    app.add_middleware(RateLimitMiddleware, redis_client=redis_client)
     yield
-    await a.state.redis_client.close()
+    await redis_client.close()
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 if __name__ == '__main__':
