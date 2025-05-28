@@ -1,7 +1,7 @@
 FROM ghcr.io/astral-sh/uv:python3.13-alpine
 
 
-WORKDIR /webserver
+WORKDIR /proxyserver
 
 ENV UV_COMPILE_BYTECODE=1
 
@@ -14,7 +14,7 @@ RUN uv sync --frozen --no-cache
 
 COPY . .
 
-CMD ["uv", "run", "uvicorn", "src.app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD []
 
 
 
