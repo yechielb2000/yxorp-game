@@ -18,7 +18,7 @@ defense!
 ## Get to know your components
 
 The components were developed in the same repo.  
-I attached them to one repo but in different environments. This is why you see the directories twice.
+I attached them to one repo but in different environments. This is why you see the directories twice.   
 I don't usually do this, I wanted to keep in one GitHub project.  
 You can, of course, split them into separated projects.
 
@@ -33,5 +33,6 @@ CLI to attach http servers.
 [README.md](attackcli/README.md)
 
 ### Proxy Server
+
 A proxy server to stop the attackers.  
 All requests to the web server go through this proxy first.
