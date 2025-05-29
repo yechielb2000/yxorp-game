@@ -36,9 +36,9 @@ services:
     environment:
       - node.name=es
       - discovery.type=single-node
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=false
-      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - ELASTIC_PASSWORD=${ELASTICSEARCH_PASS}
     ports:
       - "${ELASTICSEARCH_PORT}:${ELASTICSEARCH_PORT}"
     volumes:
@@ -53,6 +53,8 @@ services:
       - "5601:5601"
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASS}
     depends_on:
       - elasticsearch
     networks:
@@ -67,7 +69,7 @@ services:
       - "8000"
     volumes:
       - ./webserver:/webserver
-      - webserver_logs:/var/logs/webserver
+      - webserver_logs:/var/log/webserver
     env_file:
       - .env
     environment:
@@ -107,7 +109,7 @@ services:
       - ./fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
       - ./fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
       - nginx_logs:/var/log/nginx
-      - webserver_logs:/var/logs/webserver
+      - webserver_logs:/var/log/webserver
     networks:
       - es_net
 
