@@ -42,5 +42,6 @@ class ElasticSearchLogSink:
 def setup_logger():
     elastic_client = get_elasticsearch_client()
     es_sink = ElasticSearchLogSink(elastic_client)
+
     logger.remove()
     logger.add(es_sink, level=logging.INFO)
