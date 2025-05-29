@@ -107,6 +107,7 @@ services:
       - ./fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
       - ./fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
       - nginx_logs:/var/log/nginx
+      - webserver_logs:/var/logs/webserver
     networks:
       - es_net
 
