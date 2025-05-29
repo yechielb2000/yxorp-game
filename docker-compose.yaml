@@ -1,0 +1,131 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: webserver-postgres
+    restart: always
+    shm_size: 128mb
+    ports:
+      - "${POSTGRESQL_PORT}:${POSTGRESQL_PORT}"
+    environment:
+      POSTGRES_DB: ${POSTGRESQL_DB}
+      POSTGRES_USER: ${POSTGRESQL_USER}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRESQL_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - postgres_net
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - postgres_net
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: es
+    restart: always
+    environment:
+      - node.name=es
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ports:
+      - "${ELASTICSEARCH_PORT}:${ELASTICSEARCH_PORT}"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - es_net
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - es_net
+
+  webserver:
+    build:
+      context: ./webserver
+    container_name: webserver
+    restart: always
+    expose:
+      - "8000"
+    volumes:
+      - ./webserver:/webserver
+    env_file:
+      - .env
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
+    depends_on:
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_started
+    networks:
+      - postgres_net
+      - es_net
+      - web_net
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - webserver
+    networks:
+      - web_net
+      - es_net
+
+  fluentbit:
+    image: fluent/fluent-bit:2.2
+    container_name: fluentbit
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+      - ./fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
+      - nginx_logs:/var/log/nginx
+    networks:
+      - es_net
+
+  attack-cli:
+    build:
+      context: ./attackcli
+    container_name: attack-cli
+    restart: always
+    stdin_open: true
+    tty: true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+
+volumes:
+  pg_data:
+  es_data:
+  nginx_logs:
+
+networks:
+  postgres_net:
+  es_net:
+  web_net:
