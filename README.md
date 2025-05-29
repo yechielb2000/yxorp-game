@@ -34,7 +34,7 @@ CLI to attach http servers.
 
 ### Nginx
 
-You can edit the configuration here: [nginx.conf](nginx/nginx.conf).  
+You can edit the configuration here: [nginx.conf](nginx/nginx.conf).
 
 ###### All requests to the web server go through this proxy first.
 
@@ -71,3 +71,10 @@ There are three indexes:
 - `infra-logs` - for webserver infra structure logs
 - `user-actions` - for user action in the webserver
 - `nginx-logs` - for all nginx logs
+
+# NOTES
+
+You can't **stop** SYN Flood attack using nginx. You need to take care of it in the kernel level. You need to set tcp
+syn cookies and reduce tcp syn ack retry time. You can also increase the pending connections pool.  
+You can also limit it in iptables.
+
