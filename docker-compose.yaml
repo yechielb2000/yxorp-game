@@ -67,6 +67,7 @@ services:
       - "8000"
     volumes:
       - ./webserver:/webserver
+      - webserver_logs:/var/logs/webserver
     env_file:
       - .env
     environment:
@@ -124,6 +125,7 @@ volumes:
   pg_data:
   es_data:
   nginx_logs:
+  webserver_logs:
 
 networks:
   postgres_net:
