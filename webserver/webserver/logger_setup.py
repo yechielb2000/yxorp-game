@@ -1,6 +1,6 @@
 from loguru import logger
 
-from settings import settings
+from webserver.settings import settings
 
 _infra_logger = None
 _user_logger = None
@@ -26,7 +26,7 @@ def setup_logger():
     )
 
     logger.add(
-        settings.user_actions_logs_path,
+        settings.infra_logs_path,
         rotation="10 MB",
         retention="7 days",
         compression="zip",

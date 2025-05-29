@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends
 from pydantic import IPvAnyAddress
 from starlette.responses import JSONResponse
 
-from logger_setup import get_user_logger, get_infra_logger
 from webserver.controllers.ips import IpsController, get_ips_controller
+from webserver.logger_setup import get_user_logger, get_infra_logger
 
 ips_router = APIRouter(
     prefix="/ips",
