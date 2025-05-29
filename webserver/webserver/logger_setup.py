@@ -1,57 +1,43 @@
-import logging
-
-from elasticsearch import Elasticsearch
 from loguru import logger
 
-from webserver.adapters.elastic import get_elasticsearch_client
+from settings import settings
 
 _infra_logger = None
 _user_logger = None
 
-
-class ElasticSearchLogSink:
-    def __init__(self, elastic: Elasticsearch):
-        self.elastic = elastic
-        self.default_index = "infra-logs"
-
-    def write(self, message):
-        """
-        In extra, you can pass index value to control what index this log should write to.
-        """
-        log_doc = {}
-        log_record = message.record
-
-        index = message.record["extra"].get("index", self.default_index)
-
-        if index == "infra-logs":
-            log_doc = {
-                "timestamp": log_record["time"].isoformat(),
-                "level": log_record["level"].name,
-                "message": log_record["message"],
-                "module": log_record["module"],
-                "function": log_record["function"],
-                "line": log_record["line"],
-                "extra": log_record["extra"]
-            }
-        elif index == "user-actions":
-            log_doc = {
-                "timestamp": log_record["time"].isoformat(),
-                "message": log_record["message"],
-                "extra": log_record["extra"]
-            }
-        self.elastic.index(index=index, document=log_doc)
+INFRA_LOGGER_INDEX = "infra-logs"
+USER_LOGGER_INDEX = "user-actions"
 
 
 def setup_logger():
     global _infra_logger, _user_logger
 
-    elastic_client = get_elasticsearch_client()
-    es_sink = ElasticSearchLogSink(elastic_client)
-
     logger.remove()
-    logger.add(es_sink, level=logging.INFO)
-    _infra_logger = logger.bind(log_type="infra")
-    _user_logger = logger.bind(log_type="user-actions")
+
+    logger.add(
+        settings.user_actions_logs_path,
+        rotation="10 MB",
+        retention="7 days",
+        compression="zip",
+        serialize=True,
+        level="INFO",
+        filter=lambda record: record["extra"].get("index") == USER_LOGGER_INDEX,
+        enqueue=True
+    )
+
+    logger.add(
+        settings.user_actions_logs_path,
+        rotation="10 MB",
+        retention="7 days",
+        compression="zip",
+        serialize=True,
+        level="INFO",
+        filter=lambda record: record["extra"].get("index") == INFRA_LOGGER_INDEX,
+        enqueue=True
+    )
+
+    _infra_logger = logger.bind(log_type=INFRA_LOGGER_INDEX)
+    _user_logger = logger.bind(log_type=USER_LOGGER_INDEX)
 
 
 def get_infra_logger():
