@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     elasticsearch_host: str = Field(..., alias="ELASTICSEARCH_HOST")
     elasticsearch_port: int = Field(..., alias="ELASTICSEARCH_PORT")
 
+    infra_logs_path: str = Field(..., alias="WEBSERVER_INFRA_LOGS")
+    user_actions_logs_path: str = Field(..., alias="WEBSERVER_USER_ACTIONS_LOGS")
+
     class Config:
         env_file = "../../.env"
         extra = "ignore"
