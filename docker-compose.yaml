@@ -34,11 +34,16 @@ services:
     container_name: es
     restart: always
     environment:
-      - node.name=es
       - discovery.type=single-node
       - xpack.security.enabled=false
-      - xpack.security.http.ssl.enabled=false
+#      - ELASTIC_PASSWORD=changeme
+#      - KIBANA_PASSWORD=kibanapw
+      - bootstrap.memory_lock=true
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     ports:
       - "${ELASTICSEARCH_PORT}:${ELASTICSEARCH_PORT}"
     volumes:
@@ -54,7 +59,11 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_started
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - ./kibana/kibana-data-views.ndjson:/usr/share/kibana/kibana-data-views.ndjson:ro
     networks:
       - es_net
 
@@ -67,6 +76,7 @@ services:
       - "8000"
     volumes:
       - ./webserver:/webserver
+      - webserver_logs:/var/log/webserver
     env_file:
       - .env
     environment:
@@ -106,6 +116,7 @@ services:
       - ./fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
       - ./fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
       - nginx_logs:/var/log/nginx
+      - webserver_logs:/var/log/webserver
     networks:
       - es_net
 
@@ -124,6 +135,7 @@ volumes:
   pg_data:
   es_data:
   nginx_logs:
+  webserver_logs:
 
 networks:
   postgres_net:

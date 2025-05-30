@@ -9,8 +9,10 @@ class Settings(BaseSettings):
     postgresql_host: str = Field(..., alias="POSTGRESQL_HOST")
     postgresql_port: int = Field(..., alias="POSTGRESQL_PORT")
 
-    elasticsearch_host: str = Field(..., alias="ELASTICSEARCH_HOST")
-    elasticsearch_port: int = Field(..., alias="ELASTICSEARCH_PORT")
+    infra_logs_path: str = Field(..., alias="WEBSERVER_INFRA_LOGS")
+    user_actions_logs_path: str = Field(..., alias="WEBSERVER_USER_ACTIONS_LOGS")
+    jwt_secret_key: str = Field(..., alias="WEBSERVER_JWT_KEY")
+    app_port: int = Field(..., alias="WEBSERVER_PORT")
 
     class Config:
         env_file = "../../.env"
