@@ -65,12 +65,16 @@ First, we need to import our data views, so let's do this.
 curl -X POST http://localhost:5601/api/saved_objects/_import -H "kbn-xsrf: true" --form file=@./kibana/kibana-data-views.ndjson
 ```
 
-Now go to [kibana](http://localhost:5601/app/discover).  
+Now go to [kibana](http://localhost:5601/app/discover).   (log in with u:`elastic` p:`changeme`).   
 There are three indexes:
 
 - `infra-logs` - for webserver infra structure logs
 - `user-actions` - for user action in the webserver
 - `nginx-logs` - for all nginx logs
+
+You may need to recreate the password for the `kibana_system` user.  
+If you do, exec to `elasticsearch` and run `bin/elasticsearch-reset-password -u kibana_system`.  
+Now copy the new generated password to `kibana/kibana.yml` in `elasticsearch.password`.
 
 # NOTES
 
@@ -78,3 +82,10 @@ You can't **stop** SYN Flood attack using nginx. You need to take care of it in 
 syn cookies and reduce tcp syn ack retry time. You can also increase the pending connections pool.  
 You can also limit it in iptables.
 
+---
+
+I loaded configuration files that have sensitive data. And I'm aware of that, but for the sake of the exercise I put
+them
+here.  
+Also, all credentials are default password just to simplify our life it's of course not going to be like that in
+production.
