@@ -74,7 +74,10 @@ There are three indexes:
 
 You may need to recreate the password for the `kibana_system` user.  
 If you do, exec to `elasticsearch` and run `bin/elasticsearch-reset-password -u kibana_system`.  
-Now copy the new generated password to `kibana/kibana.yml` in `elasticsearch.password`.
+Now copy the new generated password to `kibana/kibana.yml` in `elasticsearch.password`.  
+Disclaimer:  
+I know that in Elastic’s official recommendation they say: “Don’t set `kibana_system` password manually. Use
+service tokens.”
 
 # NOTES
 

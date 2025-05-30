@@ -35,9 +35,9 @@ services:
     restart: always
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=true
-#      - xpack.security.transport.ssl.enabled=true
-      - ELASTIC_PASSWORD=changeme
+      - xpack.security.enabled=false
+#      - ELASTIC_PASSWORD=changeme
+#      - KIBANA_PASSWORD=kibanapw
       - bootstrap.memory_lock=true
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
     ulimits:
@@ -48,10 +48,6 @@ services:
       - "${ELASTICSEARCH_PORT}:${ELASTICSEARCH_PORT}"
     volumes:
       - es_data:/usr/share/elasticsearch/data
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -s -f http://localhost:9200/_cluster/health?wait_for_status=yellow || exit 1" ]
-      interval: 10s
-      retries: 5
     networks:
       - es_net
 
@@ -64,27 +60,10 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     depends_on:
       elasticsearch:
-        condition: service_healthy
+        condition: service_started
     volumes:
-      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
       - ./kibana/kibana-data-views.ndjson:/usr/share/kibana/kibana-data-views.ndjson:ro
-      - ./kibana/.kibana-token:/run/secrets/kibana_token:ro
-    command: >
-      bash -c "
-        /usr/local/bin/kibana-docker &
-
-        while ! curl -s http://localhost:5601/api/status | grep -q 'available'; do
-          echo 'Waiting for Kibana...';
-          sleep 5;
-        done;
-
-        echo 'Importing Kibana saved objects...';
-        curl -X POST http://localhost:5601/api/saved_objects/_import \
-             -H 'kbn-xsrf: true' \
-             -F file=@/usr/share/kibana/kibana-data-views.ndjson;
-
-        wait
-      "
     networks:
       - es_net
 
