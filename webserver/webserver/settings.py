@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     infra_logs_path: str = Field(..., alias="WEBSERVER_INFRA_LOGS")
     user_actions_logs_path: str = Field(..., alias="WEBSERVER_USER_ACTIONS_LOGS")
     jwt_secret_key: str = Field(..., alias="WEBSERVER_JWT_KEY")
+    app_port: int = Field(..., alias="WEBSERVER_PORT")
 
     class Config:
         env_file = "../../.env"

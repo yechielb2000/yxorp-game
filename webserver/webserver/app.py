@@ -7,12 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 
 from webserver.adapters.postgresql import pg_engine, BasePG
 from webserver.routers import countries_router, user_router, ips_router
+from webserver.settings import settings
 from webserver.utils.logger_setup import setup_logger
 
 
 @asynccontextmanager
 async def lifespan(a: FastAPI):
-    load_dotenv()
     setup_logger()
     conn: AsyncConnection
     async with pg_engine.begin() as conn:
@@ -26,4 +26,4 @@ app.include_router(ips_router)
 app.include_router(user_router)
 
 if __name__ == '__main__':
-    uvicorn.run("app:app", host="0.0.0.0", port=8000)
+    uvicorn.run("app:app", host="0.0.0.0", port=settings.app_port)
