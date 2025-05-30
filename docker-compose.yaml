@@ -36,8 +36,6 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-#      - ELASTIC_PASSWORD=changeme
-#      - KIBANA_PASSWORD=kibanapw
       - bootstrap.memory_lock=true
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
     ulimits:
@@ -45,7 +43,7 @@ services:
         soft: -1
         hard: -1
     ports:
-      - "${ELASTICSEARCH_PORT}:${ELASTICSEARCH_PORT}"
+      - "9200:9200"
     volumes:
       - es_data:/usr/share/elasticsearch/data
     networks:
@@ -56,8 +54,6 @@ services:
     container_name: kibana
     ports:
       - "5601:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     depends_on:
       elasticsearch:
         condition: service_started
@@ -115,6 +111,7 @@ services:
     volumes:
       - ./fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
       - ./fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
+      - ./fluentbit:/fluent-bit/tail-db
       - nginx_logs:/var/log/nginx
       - webserver_logs:/var/log/webserver
     networks:
