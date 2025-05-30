@@ -36,8 +36,8 @@ def setup_logger():
         enqueue=True
     )
 
-    _infra_logger = logger.bind(log_type=INFRA_LOGGER_INDEX)
-    _user_logger = logger.bind(log_type=USER_LOGGER_INDEX)
+    _infra_logger = logger.bind(index=INFRA_LOGGER_INDEX)
+    _user_logger = logger.bind(index=USER_LOGGER_INDEX)
 
 
 def get_infra_logger():
