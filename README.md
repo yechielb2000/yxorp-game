@@ -38,7 +38,7 @@ You can edit the configuration here: [nginx.conf](nginx/nginx.conf).
 
 ###### All requests to the web server go through this proxy first.
 
-### Tools to play around
+### Tools to play with 🧸
 
 #### Adminer
 
@@ -57,7 +57,7 @@ Database: db
 
 Connect to kibana to see webserver logs.
 
-First, we need to import our data views, so let's do this.
+First, we need to import our data views so we can see the logs in a discovery section, so let's do this.
 
 ###### Make sure the path to `kibana-data-views.ndjson` is correct.
 
@@ -68,17 +68,17 @@ curl -X POST http://localhost:5601/api/saved_objects/_import -H "kbn-xsrf: true"
 Now go to [kibana](http://localhost:5601/app/discover).   
 There are three indexes:
 
-- `infra-logs` - for webserver infra structure logs
-- `user-actions` - for user action in the webserver
-- `nginx-logs` - for all nginx logs
+- `infra-logs` - to log webserver actions.
+- `user-actions` - to log user actions in the webserver.
+- `nginx-logs` - to keep all nginx logs.
 
 # NOTES
 
 You can't **stop** SYN Flood attack using nginx. You need to take care of it in the kernel level. You need to set tcp
 syn cookies and reduce tcp syn ack retry time. You can also increase the pending connections pool.  
-You can also limit it in iptables.
+You can also limit it in iptables.  
+  
 
----
 
 I loaded configuration files that have sensitive data. And I'm aware of that, but for the sake of the exercise I put
 them
