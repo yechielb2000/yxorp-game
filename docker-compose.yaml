@@ -44,6 +44,7 @@ services:
         hard: -1
     ports:
       - "9200:9200"
+      - "9300:9300"
     volumes:
       - es_data:/usr/share/elasticsearch/data
     networks:
@@ -99,23 +100,32 @@ services:
       - nginx_logs:/var/log/nginx
     depends_on:
       - webserver
+      - fluentbit
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: host.docker.internal:24224
+        tag: docker.nginx
     networks:
       - web_net
       - es_net
 
   fluentbit:
-    image: fluent/fluent-bit:2.2
+    image: fluent/fluent-bit:latest
     container_name: fluentbit
+    ports:
+      - "24224:24224"
     depends_on:
       - elasticsearch
     volumes:
       - ./fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
       - ./fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
-      - ./fluentbit:/fluent-bit/tail-db
-      - nginx_logs:/var/log/nginx
+#      - ./fluentbit:/fluent-bit/tail-db
+#      - nginx_logs:/var/log/nginx
       - webserver_logs:/var/log/webserver
     networks:
       - es_net
+      - web_net
 
   attack-cli:
     build:

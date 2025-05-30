@@ -65,19 +65,12 @@ First, we need to import our data views, so let's do this.
 curl -X POST http://localhost:5601/api/saved_objects/_import -H "kbn-xsrf: true" --form file=@./kibana/kibana-data-views.ndjson
 ```
 
-Now go to [kibana](http://localhost:5601/app/discover).   (log in with u:`elastic` p:`changeme`).   
+Now go to [kibana](http://localhost:5601/app/discover).   
 There are three indexes:
 
 - `infra-logs` - for webserver infra structure logs
 - `user-actions` - for user action in the webserver
 - `nginx-logs` - for all nginx logs
-
-You may need to recreate the password for the `kibana_system` user.  
-If you do, exec to `elasticsearch` and run `bin/elasticsearch-reset-password -u kibana_system`.  
-Now copy the new generated password to `kibana/kibana.yml` in `elasticsearch.password`.  
-Disclaimer:  
-I know that in Elastic’s official recommendation they say: “Don’t set `kibana_system` password manually. Use
-service tokens.”
 
 # NOTES
 
