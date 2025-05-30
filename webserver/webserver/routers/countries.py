@@ -1,11 +1,10 @@
 from datetime import datetime
-from typing import Optional
 
 from fastapi import APIRouter, Depends
 from pydantic import PositiveInt
 
-from webserver.utils.jwt_token import get_current_user
 from webserver.controllers.ips import IpsController, get_ips_controller
+from webserver.utils.jwt_token import get_current_user
 from webserver.utils.logger_setup import get_user_logger
 
 countries_router = APIRouter(
@@ -23,8 +22,8 @@ async def get_top_queried_countries(top: PositiveInt, ips_controller: IpsControl
 @countries_router.get('/{country}/ips')
 async def get_country_ips(
         country: str,
-        start_time: Optional[datetime],
-        end_time: Optional[datetime],
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
         ips_controller: IpsController = Depends(get_ips_controller)
 ):
     get_user_logger().info("Request ips of country",
