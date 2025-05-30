@@ -1,10 +1,10 @@
-from sqlalchemy import Column, String, text, TIMESTAMP
+from sqlalchemy import Column, String, Integer
 
 from webserver.adapters.postgresql import BasePG
 
 
-class IPAddress(BasePG):
+class User(BasePG):
     __tablename__ = "users"
-    id = Column(String, primary_key=True, index=True)
-    username = Column(String, index=True, nullable=False)
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)

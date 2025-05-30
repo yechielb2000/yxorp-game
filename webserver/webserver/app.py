@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 from webserver.adapters.postgresql import pg_engine, BasePG
-from webserver.logger_setup import setup_logger
+from webserver.utils.logger_setup import setup_logger
 from webserver.routers.countries import countries_router
 from webserver.routers.ips import ips_router
 

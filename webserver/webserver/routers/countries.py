@@ -4,12 +4,13 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 from pydantic import PositiveInt
 
+from webserver.utils.jwt_token import get_current_user
 from webserver.controllers.ips import IpsController, get_ips_controller
-from webserver.logger_setup import get_user_logger
+from webserver.utils.logger_setup import get_user_logger
 
 countries_router = APIRouter(
     prefix="/countries",
-    dependencies=[]
+    dependencies=[Depends(get_current_user)]
 )
 
 

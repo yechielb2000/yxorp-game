@@ -6,7 +6,7 @@ from sqlalchemy import select, delete, func, and_, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from webserver.logger_setup import get_infra_logger
+from webserver.utils.logger_setup import get_infra_logger
 from webserver.adapters.postgresql import get_postgresql_db
 from webserver.models.ip_address import IPAddress
 from webserver.schemas.ip_address import IPAddressCreate, IPAddressUpdate, IPAddressRead

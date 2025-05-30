@@ -5,12 +5,13 @@ from fastapi import APIRouter, Depends
 from pydantic import IPvAnyAddress
 from starlette.responses import JSONResponse
 
+from webserver.utils.jwt_token import get_current_user
 from webserver.controllers.ips import IpsController, get_ips_controller
-from webserver.logger_setup import get_user_logger, get_infra_logger
+from webserver.utils.logger_setup import get_user_logger, get_infra_logger
 
 ips_router = APIRouter(
     prefix="/ips",
-    dependencies=[]
+    dependencies=[Depends(get_current_user)]
 )
 
 
