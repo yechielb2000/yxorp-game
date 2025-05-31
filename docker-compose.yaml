@@ -1,4 +1,65 @@
 services:
+
+  waf:
+    image: owasp/modsecurity-crs:nginx
+    container_name: waf
+    restart: always
+    ports:
+      - "80:80"                  # Expose port 80 to the outside world
+    depends_on:
+      - nginx
+    volumes:
+      - ./modsecurity-crs:/etc/modsecurity.d  # Mount your custom ModSecurity config/rules here if needed
+    networks:
+      - web_net
+      - es_net
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    expose:
+      - "8080"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - webserver
+      - fluentbit
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: host.docker.internal:24224
+        tag: docker.nginx
+    networks:
+      - web_net
+      - es_net
+
+  webserver:
+    build:
+      context: ./webserver
+    container_name: webserver
+    restart: always
+    expose:
+      - "8000"
+    volumes:
+      - ./webserver:/webserver
+      - webserver_logs:/var/log/webserver
+    env_file:
+      - .env
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
+    depends_on:
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_started
+    networks:
+      - postgres_net
+      - es_net
+      - web_net
+
   postgres:
     image: postgres:latest
     container_name: webserver-postgres
@@ -12,6 +73,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
     volumes:
       - pg_data:/var/lib/postgresql/data
+
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRESQL_USER}" ]
       interval: 5s
@@ -20,14 +82,7 @@ services:
     networks:
       - postgres_net
 
-  adminer:
-    image: adminer:latest
-    container_name: adminer
-    restart: always
-    ports:
-      - "8080:8080"
-    networks:
-      - postgres_net
+
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
@@ -63,70 +118,8 @@ services:
     networks:
       - es_net
 
-  webserver:
-    build:
-      context: ./webserver
-    container_name: webserver
-    restart: always
-    expose:
-      - "8000"
-    volumes:
-      - ./webserver:/webserver
-      - webserver_logs:/var/log/webserver
-    env_file:
-      - .env
-    environment:
-      - WATCHFILES_FORCE_POLLING=true
-    depends_on:
-      postgres:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_started
-    networks:
-      - postgres_net
-      - es_net
-      - web_net
 
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    restart: always
-    expose:
-      - "8080"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - nginx_logs:/var/log/nginx
-    depends_on:
-      - webserver
-      - fluentbit
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: host.docker.internal:24224
-        tag: docker.nginx
-    networks:
-      - web_net
-      - es_net
-      - haproxy_net
 
-  haproxy:
-    image: haproxy:latest
-    container_name: haproxy
-    restart: always
-    ports:
-      - "80:80"
-    volumes:
-      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: host.docker.internal:24224
-        tag: docker.haproxy
-    depends_on:
-      - nginx
-    networks:
-      - haproxy_net
 
   fluentbit:
     image: fluent/fluent-bit:latest
@@ -142,7 +135,15 @@ services:
     networks:
       - es_net
       - web_net
-      - haproxy_net
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - postgres_net
 
   attack-cli:
     build:
@@ -165,4 +166,3 @@ networks:
   postgres_net:
   es_net:
   web_net:
-  haproxy_net:
