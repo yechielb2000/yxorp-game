@@ -119,8 +119,6 @@ services:
     volumes:
       - ./fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
       - ./fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
-#      - ./fluentbit:/fluent-bit/tail-db
-#      - nginx_logs:/var/log/nginx
       - webserver_logs:/var/log/webserver
     networks:
       - es_net

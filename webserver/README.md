@@ -9,11 +9,11 @@ Get country of given ip. You can also get info about queried ips.
 First you have to register, route to `/users/register` and pass username and password.
 
 To log in easily use the authorized button and pass your user and password.  
-![img.png](assets/img.png)
+![img.png](assets/auth.png)
 
 Now you can use these routes to gain info.
 
-![img_1.png](assets/img_1.png)
+![img_1.png](assets/routes.png)
 
 #### route `/coutries/top`.
 
@@ -25,7 +25,7 @@ Get queried ips from this country code, you can also ask for ips between datetim
 
 For example:
 
-![img_3.png](assets/img_3.png)
+![img_3.png](assets/query_ips_from_country_example.png)
 
 #### Route `ips/{ip}/country`
 

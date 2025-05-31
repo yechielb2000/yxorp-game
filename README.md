@@ -74,14 +74,17 @@ There are three indexes:
 
 # NOTES
 
-You can't **stop** SYN Flood attack using nginx. You need to take care of it in the kernel level. You need to set tcp
-syn cookies and reduce tcp syn ack retry time. You can also increase the pending connections pool.  
-You can also limit it in iptables.  
-  
-
+### General Notes
 
 I loaded configuration files that have sensitive data. And I'm aware of that, but for the sake of the exercise I put
 them
-here.  
-Also, all credentials are default password just to simplify our life it's of course not going to be like that in
-production.
+here.
+
+### Reverse Proxy Notes
+
+You can't **stop** SYN Flood attack using nginx. You need to take care of it in the kernel level. You need to set tcp
+syn cookies and reduce tcp syn ack retry time. You can also increase the pending connections pool.  
+You can also limit it in iptables.  
+We get close enough with the nginx configurations (limiting connection per ip and rate limit)
+  
+
