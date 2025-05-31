@@ -12,8 +12,8 @@ def _syn_once(target: str, port: int):
         sock.settimeout(0.5)
         sock.connect((target, port))
         sock.close()
-    except:
-        pass
+    except socket.error:
+        typer.echo(typer.style(f"Connection refused: {target}:{port}", fg=typer.colors.RED))
 
 
 def syn_flood_attack(target: str, port: int, workers: int) -> None:
