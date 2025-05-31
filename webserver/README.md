@@ -13,7 +13,7 @@ To log in easily use the authorized button and pass your user and password.
 
 Now you can use these routes to gain info.
 
-![img_1.png](img_1.png)
+![img_1.png](assets/img_1.png)
 
 #### route `/coutries/top`.
 
