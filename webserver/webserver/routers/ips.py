@@ -1,6 +1,5 @@
 from http import HTTPStatus
 
-import ipwhois
 from fastapi import APIRouter, Depends
 from geoip2fast import GeoIP2Fast
 from pydantic import IPvAnyAddress
