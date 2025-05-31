@@ -38,7 +38,7 @@ You can edit the configuration here: [nginx.conf](nginx/nginx.conf).
 
 ###### All requests to the web server go through this proxy first.
 
-### Tools to play around
+### Tools to play with 🧸
 
 #### Adminer
 
@@ -57,7 +57,7 @@ Database: db
 
 Connect to kibana to see webserver logs.
 
-First, we need to import our data views, so let's do this.
+First, we need to import our data views so we can see the logs in a discovery section, so let's do this.
 
 ###### Make sure the path to `kibana-data-views.ndjson` is correct.
 
@@ -65,30 +65,25 @@ First, we need to import our data views, so let's do this.
 curl -X POST http://localhost:5601/api/saved_objects/_import -H "kbn-xsrf: true" --form file=@./kibana/kibana-data-views.ndjson
 ```
 
-Now go to [kibana](http://localhost:5601/app/discover).   (log in with u:`elastic` p:`changeme`).   
+Now go to [kibana](http://localhost:5601/app/discover).   
 There are three indexes:
 
-- `infra-logs` - for webserver infra structure logs
-- `user-actions` - for user action in the webserver
-- `nginx-logs` - for all nginx logs
-
-You may need to recreate the password for the `kibana_system` user.  
-If you do, exec to `elasticsearch` and run `bin/elasticsearch-reset-password -u kibana_system`.  
-Now copy the new generated password to `kibana/kibana.yml` in `elasticsearch.password`.  
-Disclaimer:  
-I know that in Elastic’s official recommendation they say: “Don’t set `kibana_system` password manually. Use
-service tokens.”
+- `infra-logs` - to log webserver actions.
+- `user-actions` - to log user actions in the webserver.
+- `nginx-logs` - to keep all nginx logs.
 
 # NOTES
 
-You can't **stop** SYN Flood attack using nginx. You need to take care of it in the kernel level. You need to set tcp
-syn cookies and reduce tcp syn ack retry time. You can also increase the pending connections pool.  
-You can also limit it in iptables.
-
----
+### General Notes
 
 I loaded configuration files that have sensitive data. And I'm aware of that, but for the sake of the exercise I put
 them
-here.  
-Also, all credentials are default password just to simplify our life it's of course not going to be like that in
-production.
+here.
+
+TBH I managed to DOS the server with syn flood. But this thing is not manged in docker level.  
+We can't stop SYN Flood attack using nginx. You need to take care of it in the kernel level.  
+You need to set tcp syn cookies and reduce tcp syn ack retry time.  
+You can also limit it in iptables. And increase the pending connections pool.
+These things can be configured on the hosting server but not in dockers.
+
+I limited connections with nginx, and I hope this passes :)

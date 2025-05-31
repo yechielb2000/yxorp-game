@@ -1,15 +1,15 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import List
 
 from fastapi import Depends
 from sqlalchemy import select, delete, func, and_, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from webserver.utils.logger_setup import get_infra_logger
 from webserver.adapters.postgresql import get_postgresql_db
 from webserver.models.ip_address import IPAddress
 from webserver.schemas.ip_address import IPAddressCreate, IPAddressUpdate, IPAddressRead
+from webserver.utils.logger_setup import get_infra_logger
 
 
 class IpsController:
@@ -17,7 +17,7 @@ class IpsController:
         self.postgres = postgres
         self.infra_logger = get_infra_logger()
 
-    async def get_ip_info(self, address: str) -> Optional[IPAddressRead]:
+    async def get_ip_info(self, address: str) -> IPAddressRead | None:
         self.infra_logger.info("Get ip info", extra={"address": address})
         stmt = select(IPAddress).where(IPAddress.address == address)
         result = await self.postgres.execute(stmt)
@@ -74,8 +74,8 @@ class IpsController:
     async def get_ips_by_country(
             self,
             country: str,
-            start_time: Optional[datetime],
-            end_time: Optional[datetime]) -> List[str]:
+            start_time: datetime | None = None,
+            end_time: datetime | None = None) -> List[str]:
         self.infra_logger.info("Get ips by country",
                                extra={"country": country, "start_time": start_time, "end_time": end_time})
         stmt = select(IPAddress.address).where(IPAddress.country == country)

@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, IPvAnyAddress
 
@@ -16,8 +15,8 @@ class IPAddressCreate(IPAddressBase):
 
 class IPAddressUpdate(BaseModel):
     address: IPvAnyAddress | str
-    searched_at: Optional[datetime] = None
-    country: Optional[str] = None
+    searched_at: datetime | None = None
+    country: str | None = None
 
 
 class IPAddressRead(IPAddressBase):
