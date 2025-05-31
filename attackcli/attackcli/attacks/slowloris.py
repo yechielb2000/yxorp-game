@@ -6,7 +6,7 @@ import time
 import typer
 
 from attackcli.utils.thread_exec import ThreadedExecutor
-from utils.useragent import get_random_user_agent
+from attackcli.utils.useragent import get_random_user_agent
 
 
 def _send_slowloris_request(target: str, port: int, timeout: float, stop_event: threading.Event):

@@ -6,7 +6,7 @@ A command-line toolkit for simulating common web-layer and network-layer attacks
 
 ## 🚀 Getting Started
 
-You can run this also from a container named `attackcli`.  
+Run this from a container named `attackcli`.  
 To explore available commands:
 
 ```shell
