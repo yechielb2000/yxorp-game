@@ -17,7 +17,7 @@ class IpsController:
         self.postgres = postgres
         self.infra_logger = get_infra_logger()
 
-    async def get_ip_info(self, address: str) -> Optional[IPAddressRead]:
+    async def get_ip_info(self, address: str) -> IPAddressRead | None:
         self.infra_logger.info("Get ip info", extra={"address": address})
         stmt = select(IPAddress).where(IPAddress.address == address)
         result = await self.postgres.execute(stmt)
