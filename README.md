@@ -36,8 +36,6 @@ CLI to attach http servers.
 
 You can edit the configuration here: [nginx.conf](nginx/nginx.conf).
 
-You can't **stop** SYN Flood attack using nginx. So there is also a `waf` in front of it.
-
 ###### All requests to the web server go through this proxy first.
 
 ### Tools to play with 🧸
@@ -82,3 +80,9 @@ I loaded configuration files that have sensitive data. And I'm aware of that, bu
 them
 here.
 
+We can't stop SYN Flood attack using nginx. You need to take care of it in the kernel level.  
+You need to set tcp syn cookies and reduce tcp syn ack retry time.  
+You can also increase the pending connections pool. You can also limit it in iptables.  
+These things can be configured on the hosting server but not in dockers.  
+
+I limited connections with nginx, and I hope this passes :)
