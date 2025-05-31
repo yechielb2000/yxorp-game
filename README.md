@@ -9,7 +9,7 @@ Your goal is to put him down! 😈
 
 ### 🔵 Blue Team
 
-Configure nginx and haproxy to defend the `webserver`.  
+Configure nginx to defend the `webserver`.  
 Your mission is to protect it at all costs! 💂
 
 There are already usable components, but they don't do much since the attacks are useless against the proxy
@@ -36,7 +36,7 @@ CLI to attach http servers.
 
 You can edit the configuration here: [nginx.conf](nginx/nginx.conf).
 
-You can't **stop** SYN Flood attack using nginx. So there is also a `haproxy` in front of it.
+You can't **stop** SYN Flood attack using nginx. So there is also a `waf` in front of it.
 
 ###### All requests to the web server go through this proxy first.
 
