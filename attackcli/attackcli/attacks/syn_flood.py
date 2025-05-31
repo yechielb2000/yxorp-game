@@ -1,6 +1,6 @@
 import socket
-import time
 
+import time
 import typer
 from rich.progress import Progress, SpinnerColumn
 
@@ -14,7 +14,7 @@ def _syn_once(target: str, port: int):
         sock.connect((target, port))
         sock.close()
     except socket.error:
-        pass
+        typer.echo(typer.style(f"[-] Failed to connect to {target}:{port}", fg=typer.colors.RED))
 
 
 def syn_flood_attack(target: str, port: int, workers: int) -> None:

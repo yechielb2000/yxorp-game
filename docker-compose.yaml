@@ -118,6 +118,11 @@ services:
       - "80:80"
     volumes:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: host.docker.internal:24224
+        tag: docker.haproxy
     depends_on:
       - nginx
     networks:
@@ -137,6 +142,7 @@ services:
     networks:
       - es_net
       - web_net
+      - haproxy_net
 
   attack-cli:
     build:

@@ -9,7 +9,7 @@ Your goal is to put him down! 😈
 
 ### 🔵 Blue Team
 
-Configure nginx to defend the `webserver`.  
+Configure nginx and haproxy to defend the `webserver`.  
 Your mission is to protect it at all costs! 💂
 
 There are already usable components, but they don't do much since the attacks are useless against the proxy
@@ -35,6 +35,8 @@ CLI to attach http servers.
 ### Nginx
 
 You can edit the configuration here: [nginx.conf](nginx/nginx.conf).
+
+You can't **stop** SYN Flood attack using nginx. So there is also a `haproxy` in front of it.
 
 ###### All requests to the web server go through this proxy first.
 
@@ -79,12 +81,4 @@ There are three indexes:
 I loaded configuration files that have sensitive data. And I'm aware of that, but for the sake of the exercise I put
 them
 here.
-
-### Reverse Proxy Notes
-
-You can't **stop** SYN Flood attack using nginx. You need to take care of it in the kernel level. You need to set tcp
-syn cookies and reduce tcp syn ack retry time. You can also increase the pending connections pool.  
-You can also limit it in iptables.  
-We get close enough with the nginx configurations (limiting connection per ip and rate limit)
-  
 
