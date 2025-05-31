@@ -1,6 +1,5 @@
 import threading
-from queue import Queue
-
+from queue import Queue, Empty
 import typer
 
 
@@ -18,7 +17,7 @@ class ThreadedExecutor:
         while not self._stop_event.is_set():
             try:
                 func, args, kwargs = self.tasks.get(timeout=0.5)
-            except Exception:
+            except Empty:
                 continue
 
             try:
@@ -32,8 +31,7 @@ class ThreadedExecutor:
         with typer.progressbar(range(self.max_workers), label="Starting workers") as progress:
             for _ in progress:
                 t = threading.Thread(target=self._worker)
-                t.daemon = True
-                t.start()
+                t.start()  # Removed daemon=True
                 self.threads.append(t)
 
     def wait(self):
