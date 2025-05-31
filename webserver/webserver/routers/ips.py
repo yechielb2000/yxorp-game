@@ -3,7 +3,6 @@ from http import HTTPStatus
 
 import ipwhois
 from fastapi import APIRouter, Depends
-from ipwhois import IPDefinedError
 from pydantic import IPvAnyAddress
 from starlette.responses import JSONResponse
 
@@ -28,15 +27,15 @@ async def get_ip_info(ip: IPvAnyAddress, ips_controller: IpsController = Depends
         if ip_obj.is_global:
             get_infra_logger().info("Looking up ip info for ip: ", extra={'ip_address': ip})
             whois = ipwhois.IPWhois(ip)
-            search_result = whois.lookup_rdap()
+            search_result = whois.lookup_rdap(get_asn_description=False)
             country = search_result.get('network', {}).get('country')
             if country:
                 get_infra_logger().info("Found country for ip: ", extra={'ip_address': ip})
                 return await ips_controller.upsert_ip_info(ip, country)
         else:
             get_infra_logger().info("IP is not global", extra={'ip_address': ip})
-            raise IPDefinedError("IP is not global")
-    except IPDefinedError as e:
+            raise ipwhois.IPDefinedError("IP is not global")
+    except ipwhois.IPDefinedError as e:
         get_infra_logger().error("IP defined error", extra={'ip_address': ip}, exc_info=e)
 
     get_infra_logger().info("IP country not found", extra={'ip_address': ip})
