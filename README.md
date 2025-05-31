@@ -80,9 +80,10 @@ I loaded configuration files that have sensitive data. And I'm aware of that, bu
 them
 here.
 
+TBH I managed to DOS the server with syn flood. But this thing is not manged in docker level.  
 We can't stop SYN Flood attack using nginx. You need to take care of it in the kernel level.  
 You need to set tcp syn cookies and reduce tcp syn ack retry time.  
-You can also increase the pending connections pool. You can also limit it in iptables.  
-These things can be configured on the hosting server but not in dockers.  
+You can also limit it in iptables. And increase the pending connections pool.
+These things can be configured on the hosting server but not in dockers.
 
 I limited connections with nginx, and I hope this passes :)
