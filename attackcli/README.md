@@ -24,7 +24,7 @@ Attempts to brute-force common login endpoints by trying multiple paths from a w
 > Important Note ! using `host.docker.internal` inside the container, running it in host it's of course `localhost`
 
 ```shell
-attack brute-force -u host.docker.internal:80 -w path/to/wordlists -t 10
+attack brute-force -u http://host.docker.internal:80 -w wordlists/api-common  -t 10
 ```
 
 ---
